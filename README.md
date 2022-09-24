@@ -1,2 +1,13 @@
-# computerVision
-Computer vision 
+# Computer Vision 2022
+Katherine García
+
+---
+## Tareas
+- [1. Visualization tools](/Tarea1/)
+- [2. HDR or Pencil](/Tarea2/)
+- [3. Sharp Effect](/Tarea3/)
+- [4. Fast Sharp Effect (Cython)](/Tarea4/)
+
+ ---
+ ## Laboratorios 
+- [1. Connected components](/Lab1/)
