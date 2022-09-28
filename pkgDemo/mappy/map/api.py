@@ -1,0 +1,1 @@
+from mappy.map.map import *
