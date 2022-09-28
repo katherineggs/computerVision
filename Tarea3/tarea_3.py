@@ -1,4 +1,4 @@
-# Katherine García 20190418
+# Katherine Garcia 20190418
 import sys
 from turtle import pen ; sys.path.append("../") 
 import numpy as np
@@ -12,31 +12,17 @@ cap = cv.VideoCapture(camID, cv.CAP_AVFOUNDATION)
 if (cap.isOpened() == False):
     print("Video capture failed to open")
 
-def HDR(img):
-    hdr = cv.detailEnhance(img, sigma_s=12, sigma_r=0.15)
-    return  hdr
-
-def pencilSketch(img):
-    bw, color = cv.pencilSketch(img, sigma_s=60, sigma_r=0.07, shade_factor=0.1)
-    return  bw, color
-
-
 while True:
     ret, frame = cap.read()
     im = frame[:,:,:]
-    # imgs = [] # HDR - capture multiple imgs 
 
     if ret: # if frame is read correctly ret is True
         # create windows
         win0 = 'Original'
-        # win1 = 'HDR'
-        win2 = 'PencilColor'
-        win3 = 'PencilBW'
+        win1 = 'SharpEffect'
 
         cv.namedWindow(win0, cv.WINDOW_NORMAL)
-        # cv.namedWindow(win1, cv.WINDOW_NORMAL)
-        cv.namedWindow(win2, cv.WINDOW_NORMAL)
-        cv.namedWindow(win3, cv.WINDOW_NORMAL)
+        cv.namedWindow(win1, cv.WINDOW_NORMAL)
 
         # resize windows
         rows, cols = im.shape[0:2]
@@ -46,26 +32,17 @@ while True:
         newSize = (miniCols, miniRows) 
 
         cv.resizeWindow(win0, newSize)
-        # cv.resizeWindow(win1, newSize)
-        cv.resizeWindow(win2, newSize)
-        cv.resizeWindow(win3, newSize)
+        cv.resizeWindow(win1, newSize)
 
         # apply operation
-        # making the hdr img
-        # hdr = HDR(im)
-        pencilBW = pencilSketch(im)[0]
-        pencilC = pencilSketch(im)[1]
+        # ---
 
         # show windows
         cv.imshow(win0, im)
-        # cv.imshow(win1, hdr)
-        cv.imshow(win2, pencilC)
-        cv.imshow(win3, pencilBW)
+        cv.imshow(win1)
 	
         # align windows        
-        # cv.moveWindow(win1, 0, 0)
-        cv.moveWindow(win2, miniCols, 0)
-        cv.moveWindow(win3, 0, miniRows)
+        cv.moveWindow(win1, 0, 0)
         cv.moveWindow(win0, miniCols, miniRows)
         
         # exit with q
