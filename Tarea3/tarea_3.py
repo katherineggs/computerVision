@@ -1,8 +1,11 @@
 # Katherine Garcia 20190418
+# cambiar resolución
+# 
 import sys
 from turtle import pen ; sys.path.append("../") 
 import numpy as np
 import cv2 as cv
+from Tarea1 import plot
 
 # camara de la compu = 0, otras = 1,2,3,...
 camID = 0 
@@ -11,6 +14,11 @@ cap = cv.VideoCapture(camID, cv.CAP_AVFOUNDATION)
 # verify that video handle is open
 if (cap.isOpened() == False):
     print("Video capture failed to open")
+
+# kernel
+laplacian = np.array([[ -1,-1, -1],
+                        [-1, 9.5,-1],
+                        [ -1,-1, -1]])
 
 while True:
     ret, frame = cap.read()
@@ -34,12 +42,30 @@ while True:
         cv.resizeWindow(win0, newSize)
         cv.resizeWindow(win1, newSize)
 
+        # vars
+        channels = im.shape[2]
+        filtered = []
+        print(channels)
+
         # apply operation
+        for channel in range(channels):
+            imChannel = im[:,:,channel]
+            fx = plot.imgFilter(imChannel, laplacian)
+
+            #f = np.zeros_like(img, dtype=np.float32)
+            f = cv.normalize(fx, 0, 255, cv.NORM_MINMAX)
+            
+            # para que no sea tan obscura
+            # f = f.astype(np.uint8)
+            f = (np.clip(f,0,1) * 255).astype(np.uint8)
+            filtered.append(f)
+            
+        merged = cv.merge(filtered)
         # ---
 
         # show windows
         cv.imshow(win0, im)
-        cv.imshow(win1)
+        cv.imshow(win1, merged)
 	
         # align windows        
         cv.moveWindow(win1, 0, 0)
