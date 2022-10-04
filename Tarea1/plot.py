@@ -53,7 +53,7 @@ def imgFilter(img, kernel):
     rK,cK = kernel.shape
     assert(rK == cK)
     R = rK//2
-    filtered = np.zeros((rImg,cImg), dtype=np.float64)
+    filtered = np.zeros((rImg,cImg), dtype=np.float32)
     for i in range(R, rImg-R):# i filas j columnas
         for j in range(R, cImg-R):
             w = img[i-R:i+R+1,j-R:j+R+1]
