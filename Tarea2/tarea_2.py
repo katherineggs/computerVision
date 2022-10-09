@@ -1,4 +1,5 @@
 # Katherine García 20190418
+# https://github.com/katherineggs/computerVision
 import sys
 from turtle import pen ; sys.path.append("../") 
 import numpy as np
