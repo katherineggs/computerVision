@@ -1,6 +1,7 @@
 # Katherine Garcia 20190418
 # https://github.com/katherineggs/computerVision
-# 
+# toma aprox 33s, testT3 funciona con una img 
+
 import sys
 from turtle import pen ; sys.path.append("../") 
 import numpy as np
