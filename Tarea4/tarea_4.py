@@ -1,4 +1,5 @@
 # Katherine García 20190418
+# https://github.com/katherineggs/computerVision/tree/main/Tarea4#tarea-4---fast-sharp-effect
 
 # ---------------------------------------
 import sys ; sys.path.append("../")
@@ -37,9 +38,9 @@ def process(vid, kernel):
         Tiempo original = 1551.88
         Tiempo cython = 6.59
     """
-    now = time.time()
+    times = []
     while True:
-        
+        now = time.time()
         ret, frame = vid.read()
 
         if ret: # if frame is read correctly ret is True
@@ -88,8 +89,11 @@ def process(vid, kernel):
                 
             # merge a los canales de la img
             merged = cv.merge((filtered))
-
-            # print("Time per frame", time.time() - now)
+            # ---
+            
+            tt = time.time() - now # time taken per frame
+            print("Time per frame", tt)
+            times.append(tt)
 
             # show windows
             cv.imshow(win0, im)
@@ -105,7 +109,8 @@ def process(vid, kernel):
         else:
             break
     
-    print("Time", time.time() - now)
+    print("AVG Time", sum(times)/len(times))
+
     #clean up before exit
     vid.release()
     cv.destroyAllWindows()
@@ -121,9 +126,9 @@ if __name__ == '__main__':
     # vid = parser.parse_args()
     # print(vid)
     # final = run(vid.input)
-    # pathVid = '/Users/katherinegarcia/Desktop/computerVision/imgs/count.mp4'
+    pathVid = '/Users/katherinegarcia/Desktop/computerVision/imgs/count.mp4'
     
     # TENER EL VIDEO EN LA MISMA CARPETA
-    pathVid = 'count.mp4'
+    # pathVid = 'count.mp4'
     # pathVid = 'boat.mp4'
     final = run(pathVid)
