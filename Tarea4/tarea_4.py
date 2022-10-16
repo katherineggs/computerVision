@@ -91,9 +91,9 @@ def process(vid, kernel):
             merged = cv.merge((filtered))
             # ---
             
-            tt = time.time() - now # time taken per frame
-            print("Time per frame", tt)
-            times.append(tt)
+            # tt = time.time() - now # time taken per frame
+            # print("Time per frame", tt)
+            # times.append(tt)
 
             # show windows
             cv.imshow(win0, im)
@@ -109,7 +109,7 @@ def process(vid, kernel):
         else:
             break
     
-    print("AVG Time", sum(times)/len(times))
+    # print("AVG Time", sum(times)/len(times))
 
     #clean up before exit
     vid.release()
@@ -126,9 +126,9 @@ if __name__ == '__main__':
     # vid = parser.parse_args()
     # print(vid)
     # final = run(vid.input)
-    pathVid = '/Users/katherinegarcia/Desktop/computerVision/imgs/count.mp4'
+    # pathVid = '/Users/katherinegarcia/Desktop/computerVision/imgs/count.mp4'
     
     # TENER EL VIDEO EN LA MISMA CARPETA
-    # pathVid = 'count.mp4'
+    pathVid = 'count.mp4'
     # pathVid = 'boat.mp4'
     final = run(pathVid)
