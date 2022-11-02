@@ -11,6 +11,7 @@ Katherine García
  ---
  ## Laboratorios 
 - [1. Connected components](/Lab1/)
+- [2. HOG](/Lab2/)
 
  ---
  ## Cosas bonis :)
