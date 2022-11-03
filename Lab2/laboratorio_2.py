@@ -1,18 +1,17 @@
 # Katherine García 20190418
-#
+# https://github.com/katherineggs/computerVision#laboratorios
 
 import sys ; sys.path.append("/Users/katherinegarcia/Desktop/computerVision/Tarea1/") # osx
 from skimage.util import view_as_windows
 from math import ceil
 import numpy as np
 import cv2 as cv
-import plot
 import os
 
 kernelX = np.array([-1,0,1]).reshape(1,-1)
 kernelY = np.array([-1,0,1]).reshape(-1,1)
 
-def loadImg(path = '/Users/katherinegarcia/Desktop/computerVision/imgs/'):
+def loadImg(path):
     """Load img from imgs folder
 
     Args:
@@ -22,7 +21,7 @@ def loadImg(path = '/Users/katherinegarcia/Desktop/computerVision/imgs/'):
         im: image in grayscale
     """
     # color
-    im = cv.imread(os.path.join(path,'p1.png'), cv.IMREAD_COLOR)
+    im = cv.imread(os.path.join(path), cv.IMREAD_COLOR)
     im = cv.cvtColor(im, cv.COLOR_BGR2RGB)
 
     #BW
@@ -133,8 +132,7 @@ def convolveRGB(img, kernelX, kernelY):
         
     Returns:
         gradients (list): List of numpy arrays containing the x and y convolution per channel.
-    """
-   
+    """   
     gradients = []
 
    # pasarle convolve
@@ -161,8 +159,7 @@ def grad2vect(gradients, degrees=False, unsigned=False):
     Returns:
         magnitude (np.array): 3 channel image of magnitudes.
         angle (np.array): 3 channel image of angles.
-    """
-    
+    """   
     magnitude = []
     angles = []
     for gx, gy in gradients:
@@ -191,7 +188,6 @@ def hogVector(magnitude, angles):
     Returns:
         mag, ang: (np.array): Maximum magnitude per channel (mag) and corresponding orientation (ang)
     """
-
     img_shape = magnitude.shape
     mag = np.zeros((img_shape[0], img_shape[1]))
     ang = np.zeros((img_shape[0], img_shape[1]))
@@ -203,9 +199,6 @@ def hogVector(magnitude, angles):
             maxAng = angles[row, col, maxChannel]
             mag[row, col]=(maxMagn)
             ang[row, col]=(maxAng)
-    
-    # mag = cv.merge(np.array(mag))
-    # ang = cv.merge(np.array(ang))
     return mag, ang
 
 def hogHist(mag, ang):
@@ -229,38 +222,49 @@ def hogHist(mag, ang):
     for row in range(mag.shape[0]): # mag -> 8x8
         for col in range(mag.shape[1]):
             angBin = ceil(ang[row, col] / step) # no. of bin
-            angQty = (ang[row, col] / step ) % 1 # amount
+            angQty = angBin - ang[row, col] / step # amount
             actualMag = mag[row, col]
-
-            hogHist[angBin] += actualMag * angQty
-            hogHist[angBin - 1] += actualMag * (1 - angQty) # + por el floor 
+            
+            hogHist[angBin] += actualMag * (1 - angQty)
+            
+            # if angBin == 0: # para tirar los datos a; 160 y no al 180 
+            #     hogHist[angBin - 2] += actualMag * (angQty) # + por el floor 
+            # else:
+            hogHist[angBin - 1] += actualMag * (angQty) # + por el floor 
     
     # 180 merge with 0
     hogHist[0] += hogHist[-1]
     hogHist.pop(-1) # remove 180
-
     return hogHist
 
-def normalize(hist): # CAMBIAR
-    """ normalize hist
+def normL2(hist):
+    """normalize the histogram with l2 normalization
 
     Args:
-        hist (array): hog hist to normalize
+        hist (array): histogram
 
     Returns:
-        array: normalized hist
+        array: array normalized
     """
-    mini = np.min(hist)
-    if mini < 0:
-        hist = hist - mini
-    
-    hist = hist / np.max(hist)
-    
-    return hist
+    norm = hist / np.sqrt( np.sum( hist ** 2 ) )
+    return norm
 
-def lastStep(magnitude, angles):
+def hog(imgPath):
+    """Build HOG descriptor
+    Convolution, gradients and image manipulation to calculate the HOG descriptor. 
+
+    Args:
+        imgPath (openCV img): colored img
+
+    Returns:
+        numpy array: final HOG descriptor
+    """
+    img = loadImg(imgPath)
+    grads = convolveRGB(img, kernelX, kernelY)
+    magnitude, angles = grad2vect(grads, degrees=True, unsigned=True)
+    magnitude, angles = hogVector(magnitude, angles)
+
     histsImg = []
-
     windowsMag = view_as_windows(magnitude, (8,8), 8)
     windowsAng = view_as_windows(angles, (8,8), 8)
 
@@ -270,14 +274,14 @@ def lastStep(magnitude, angles):
 
     histsImg = np.array(histsImg).reshape(magnitude.shape[0]//8, magnitude.shape[1]//8, 9)
 
-    return histsImg
+    descriptorHOG = []
+    winds = view_as_windows(histsImg, (2, 2, 9))
+    for r in range(winds.shape[0]): # Filas 
+        for c in range(winds.shape[1]): # Cols
+            vect = np.reshape(winds[r][c], -1)
+            vect = normL2(vect)
+            descriptorHOG.append(vect)
 
-def run():
-    img = loadImg()
-    grads = convolveRGB(img, kernelX, kernelY)
-    magnitude, angles = grad2vect(grads, degrees=True, unsigned=True)
-    magnitude, angles = hogVector(magnitude, angles)
-    histConcat = lastStep(magnitude, angles)
-    return histConcat
+    descriptorHOG = np.reshape(np.array(descriptorHOG), -1)
 
-fin = run()
+    return descriptorHOG
