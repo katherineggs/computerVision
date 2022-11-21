@@ -15,7 +15,8 @@ Katherine García
 
  ---
  ## Proyectos 
-- [1. ](/Proyecto1/)
+- [1. HOG model train](/Proyecto1/)
+- [2. HOG classifier](/ProyectoFinal/)
 
  ---
  ## Cosas bonis :)
